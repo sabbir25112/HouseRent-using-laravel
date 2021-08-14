@@ -48,7 +48,7 @@ class DashboardController extends Controller
                             ->where('user_id', Auth::id())
                             ->first();
 
-        return view('renter.house.show', compact('house', 'stayOnceUponATime', 'alreadyReviewed')); 
+        return view('renter.house.show', compact('house', 'stayOnceUponATime', 'alreadyReviewed'));
     }
 
     public function review(Request $request){

@@ -36,7 +36,7 @@ class HouseController extends Controller
             session()->flash('danger','To add new house you have to add area first');
             return redirect()->back();
         }
-        
+
         $areas = Area::all();
         return view('landlord.house.create', compact('areas'));
     }
@@ -64,36 +64,36 @@ class HouseController extends Controller
         $featured_image = $request->file('featured_image');
         if($featured_image)
         {
-             // Make Unique Name for Image 
+             // Make Unique Name for Image
             $currentDate = Carbon::now()->toDateString();
             $featured_image_name = $currentDate.'-'.uniqid().'.'.$featured_image->getClientOriginalExtension();
-  
-  
+
+
           // Check Dir is exists
-  
+
               if (!Storage::disk('public')->exists('featured_house')) {
                  Storage::disk('public')->makeDirectory('featured_house');
               }
-  
-  
+
+
               // Resize Image  and upload
               $cropImage = Image::make($featured_image)->resize(400,300)->stream();
               Storage::disk('public')->put('featured_house/'.$featured_image_name,$cropImage);
-  
+
          }
-       
 
 
+        $data = [];
         if($request->hasfile('images'))
         {
              foreach($request->file('images') as $file)
              {
                  $name = time() . '-'. uniqid() . '.'.$file->extension();
-                 $file->move(public_path().'/images/', $name);  
-                 $data[] = $name;  
+                 $file->move(public_path().'/images/', $name);
+                 $data[] = $name;
              }
         }
-    
+
         $house = new House();
         $house->address = $request->address;
         $house->user_id = Auth::id();
@@ -103,7 +103,7 @@ class HouseController extends Controller
         $house->number_of_room = $request->number_of_room;
         $house->number_of_belcony = $request->number_of_belcony;
         $house->rent = $request->rent;
-        $house->images = json_encode($data);
+        $house->images = isset($data) ? json_encode($data) : null;
         $house->featured_image = $featured_image_name;
         $house->save();
         return redirect(route('landlord.house.index'))->with('success', 'House Added successfully');
@@ -117,7 +117,7 @@ class HouseController extends Controller
      */
     public function show(House $house)
     {
-        return view('landlord.house.show')->with('house', $house); 
+        return view('landlord.house.show')->with('house', $house);
     }
 
     /**
@@ -162,8 +162,8 @@ class HouseController extends Controller
      */
     public function update(Request $request, House $house)
     {
-        
-        
+
+
         $this->validate($request,[
             'address' => 'required',
             'area_id' => 'required',
@@ -181,18 +181,18 @@ class HouseController extends Controller
 
         if($featured_image)
         {
-     
-             // Make Unique Name for Image 
+
+             // Make Unique Name for Image
             $currentDate = Carbon::now()->toDateString();
             $featured_image_name =$currentDate.'-'.uniqid().'.'.$featured_image->getClientOriginalExtension();
-  
-  
+
+
              // Check Dir is exists
               if (!Storage::disk('public')->exists('featured_house')) {
                  Storage::disk('public')->makeDirectory('featured_house');
               }
 
-              
+
               // Resize Image and upload
               $cropImage = Image::make($featured_image)->resize(400,300)->stream();
               Storage::disk('public')->put('featured_house/'.$featured_image_name,$cropImage);
@@ -203,20 +203,20 @@ class HouseController extends Controller
              $house->featured_image = $featured_image_name;
          }
 
-       
+
         //handle multiple images update
         if($request->hasfile('images'))
         {
-           
+
              foreach(json_decode($house->images) as $picture){
                      @unlink("images/". $picture);
              }
-         
+
              foreach($request->file('images') as $file)
              {
                  $name = time() . '-'. uniqid() . '.'.$file->extension();
-                 $file->move(public_path().'/images/', $name);  
-                 $data[] = $name;  
+                 $file->move(public_path().'/images/', $name);
+                 $data[] = $name;
              }
 
              $house->images=json_encode($data);
