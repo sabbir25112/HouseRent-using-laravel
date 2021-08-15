@@ -142,6 +142,16 @@
         </li>
 
         <li class="nav-item has-treeview">
+                    <a href="{{ route('landlord.bachelor-house.index') }}"
+                       class="nav-link {{ Request::is('landlord/bachelor-house*') ? 'active' : '' }}">
+                        <i class="fa fa-home" aria-hidden="true"></i>
+                        <p class="pl-2">
+                            Bachelor House
+                        </p>
+                    </a>
+                </li>
+
+        <li class="nav-item has-treeview">
           <a href="{{ route('landlord.profile.show') }}"
             class="nav-link {{ Request::is('landlord/profile-info*') ? 'active' : '' }}">
             <i class="fas fa-user"></i>

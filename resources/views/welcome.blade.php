@@ -29,7 +29,7 @@
                                 {{-- <input type="text" name="room" placeholder="room" class="form-control"> --}}
                                 <select name="room"  class="form-control">
                                     <option value="" >House Type</option>
-                                    <option value="2">Famili</option>
+                                    <option value="2">Family</option>
                                     <option value="1">Bachelor</option>
                                 </select>
                             </div>

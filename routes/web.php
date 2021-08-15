@@ -61,7 +61,9 @@ Route::group(['as' => 'landlord.', 'prefix' => 'landlord', 'namespace' => 'Landl
         Route::get('dashboard', 'DashboardController@index')->name('dashboard');
         Route::resource('area', 'AreaController');
         Route::resource('house', 'HouseController');
+        Route::resource('bachelor-house', 'BachelorHouseController');
         Route::get('house/switch-status/{id}', 'HouseController@switch')->name('house.status');
+        Route::get('bachelor-house/switch-status/{id}', 'BachelorHouseController@switch')->name('bachelor-house.status');
 
         Route::get('booking-request-list', 'BookingController@bookingRequestListForLandlord')->name('bookingRequestList');
         Route::post('booking-request/accept/{id}', 'BookingController@bookingRequestAccept')->name('request.accept');
