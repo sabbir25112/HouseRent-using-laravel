@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Landlord;
 
+use App\BachelorHouse;
 use App\Booking;
 use App\House;
 use App\Http\Controllers\Controller;
@@ -17,94 +18,49 @@ class BookingController extends Controller
     }
 
     public function bookingRequestAccept($id){
-
         $book = Booking::findOrFail($id);
 
 
-        if(Booking::where('address', $book->address)->where('booking_status', "booked")->count() > 0){
+        if($book->house_type == 1 && Booking::where('address', $book->address)->where('booking_status', "booked")->count() > 0){
             session()->flash('danger', 'This house is already booked. Please cancel his/her booking request');
-            return redirect()->back(); 
+            return redirect()->back();
         }
 
+        if ($book->house_type == 1)
+        {
+            $house = House::where('id', $book->house_id)->first();
+            $house->status = 0;
 
-        $house = House::where('address', $book->address)->first();
-        $house->status = 0;
+            $renterContact = $book->renter->contact;
+            $renterName = $book->renter->name;
+            $houseAddress = $book->address;
 
+            $house->save();
+        } else {
+            $house = BachelorHouse::where('id', $book->house_id)->first();
+            if ($book->booking_for == 'seat') {
+                $house->number_of_available_seat = $house->number_of_available_seat - 1;
+            } else {
+                $house->number_of_available_room = $house->number_of_available_room - 1;
+            }
+            $house->save();
+        }
 
-        $renterContact = $book->renter->contact;
-        $renterName = $book->renter->name;
-        $houseAddress = $book->address;
-        
-//         $url = "http://66.45.237.70/api.php";
-//         $number="$renterContact";
-//         $text="Hello $renterName,
-// Your Booking Request for Address: $houseAddress, has been ACCEPTED.
-
-// Regards,
-// House Rental";
-//         $data= array(
-//         'username'=>"01670605075",
-//         'password'=>"Cefixime*58#",
-//         'number'=>"$number",
-//         'message'=>"$text"
-//         );
-
-//         $ch = curl_init(); // Initialize cURL
-//         curl_setopt($ch, CURLOPT_URL,$url);
-//         curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
-//         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-//         $smsresult = curl_exec($ch);
-//         $p = explode("|",$smsresult);
-//         $sendstatus = $p[0];
-
-
-
-        $house->save();
         $book->leave = "Currently Staying";
         $book->booking_status = "booked";
         $book->save();
 
         session()->flash('success', 'Booking Accepted Successfully');
-        return redirect()->back(); 
+        return redirect()->back();
     }
 
     public function bookingRequestReject($id){
 
         $book = Booking::find($id);
-        
-        $renterContact = $book->renter->contact;
-        $renterName = $book->renter->name;
-        $houseAddress = $book->address;
-        
-//         $url = "http://66.45.237.70/api.php";
-//         $number="$renterContact";
-//         $text="Hello $renterName,
-// Your Booking Request for Address: $houseAddress, has been REJECTED.
-
-// Regards,
-// House Rental";
-//         $data= array(
-//         'username'=>"01670605075",
-//         'password'=>"Cefixime*58#",
-//         'number'=>"$number",
-//         'message'=>"$text"
-//         );
-
-//         $ch = curl_init(); // Initialize cURL
-//         curl_setopt($ch, CURLOPT_URL,$url);
-//         curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
-//         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-//         $smsresult = curl_exec($ch);
-//         $p = explode("|",$smsresult);
-//         $sendstatus = $p[0];
-        
-        
-        
-        
         $book->delete();
 
         session()->flash('success', 'Booking Rejected Successfully');
-        return redirect()->back(); 
+        return redirect()->back();
 
     }
 
@@ -134,6 +90,6 @@ class BookingController extends Controller
         $book->save();
 
         session()->flash('success', 'Renter Leave Successfully');
-        return redirect()->back(); 
+        return redirect()->back();
     }
 }

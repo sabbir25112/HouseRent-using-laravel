@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Area;
+use App\BachelorHouse;
 use App\Booking;
 use App\House;
 use App\User;
@@ -19,7 +20,7 @@ class HomeController extends Controller
      */
     public function __construct()
     {
-        
+
     }
 
     /**
@@ -53,10 +54,23 @@ class HomeController extends Controller
         return view('houseDetails', compact('house'));
     }
 
+    public function bachelorHouseDetails($id){
+        $house = BachelorHouse::findOrFail($id);
+        return view('bachelorHouseDetails', compact('house'));
+    }
+
+
     public function allHouses(){
         $houses = House::latest()->where('status', 1)->paginate(12);
-        return view('allHouses', compact('houses'));
+        $type = 1;
+        return view('allHouses', compact('houses', 'type'));
     }
+    public function allBachelorHouses(){
+        $houses = BachelorHouse::latest()->where('status', 1)->paginate(12);
+        $type = 2;
+        return view('allHouses', compact('houses', 'type'));
+    }
+
 
     public function areaWiseShow($id){
         $area = Area::findOrFail($id);
@@ -65,12 +79,12 @@ class HomeController extends Controller
     }
 
     public function search(Request $request){
-        
+
         $room = $request->room;
         $bathroom = $request->bathroom;
         $rent = $request->rent;
         $address = $request->address;
-        
+
 
         if( $room == null && $bathroom == null && $rent == null && $address == null){
             session()->flash('search', 'Your have to fill up minimum one field for search');
@@ -100,7 +114,7 @@ class HomeController extends Controller
 
 
     public function booking($house){
-        
+
         // if(Auth::user()->role_id == 1 || Auth::user()->role_id == 2){
         //     session()->flash('danger', 'Sorry admin and landlord are not able to book any houses. Please login with renter account');
         //     return redirect()->back();
@@ -123,26 +137,72 @@ class HomeController extends Controller
         }
 
 
-       
 
-    
+
+
         //find current date month year
         // $now = Carbon::now();
         // $now = $now->format('F d, Y');
-        
-        
+
+
         $booking = new Booking();
         $booking->address = $house->address;
         $booking->rent = $house->rent;
         $booking->landlord_id = $landlord->id;
         $booking->renter_id = Auth::id();
+        $booking->house_type = 1;
+        $booking->house_id = $house->id;
         $booking->save();
 
 
         session()->flash('success', 'House Booking Request Send Successfully');
         return redirect()->back();
- 
+
 
     }
 
+
+    public function bachelorBooking($house)
+    {
+        $house = BachelorHouse::findOrFail($house);
+        $landlord = User::where('id', $house->user_id)->first();
+
+//        if(Booking::where('address', $house->address)->where('booking_status', "booked")->count() > 0){
+//            session()->flash('danger', 'This house has already been booked!');
+//            return redirect()->back();
+//        }
+
+
+
+        if(Booking::where('address', $house->address)->where('renter_id', Auth::id())->where('booking_status', "requested")->count() > 0){
+            session()->flash('danger', 'Your have already sent booking request of this home');
+            return redirect()->back();
+        }
+
+
+
+
+
+        //find current date month year
+        // $now = Carbon::now();
+        // $now = $now->format('F d, Y');
+
+        $booking_for = \request()->get('booking-for');
+        if ($booking_for == 'seat') $rent = $house->rent_per_seat;
+        else $rent = $house->rent_per_room;
+
+        $booking = new Booking();
+        $booking->address = $house->address;
+        $booking->rent = $rent;
+        $booking->landlord_id = $landlord->id;
+        $booking->renter_id = Auth::id();
+        $booking->house_type = 2;
+        $booking->house_id = $house->id;
+        $booking->booking_for = $booking_for;
+        $booking->save();
+
+
+        session()->flash('success', 'Bachelor House Booking Request Send Successfully');
+        return redirect()->back();
+    }
 }

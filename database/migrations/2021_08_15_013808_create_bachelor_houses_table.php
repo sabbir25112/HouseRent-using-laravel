@@ -20,7 +20,9 @@ class CreateBachelorHousesTable extends Migration
             $table->integer('user_id');
             $table->string('contact');
             $table->integer('number_of_room')->nullable();
+            $table->integer('number_of_available_room')->nullable();
             $table->integer('number_of_seat')->nullable();
+            $table->integer('number_of_available_seat')->nullable();
             $table->string('house_for')
                 ->nullable()
                 ->comment('Job Holder, Student');

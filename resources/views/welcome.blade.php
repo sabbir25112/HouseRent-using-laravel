@@ -22,16 +22,8 @@
                             @endif
                         </div>
                         <div class="row">
-                            <div class="form-group col-md-2">
+                            <div class="form-group col-md-4">
                                 <input type="text" name="address" placeholder="search an area" class="form-control">
-                            </div>
-                            <div class="form-group col-md-2">
-                                {{-- <input type="text" name="room" placeholder="room" class="form-control"> --}}
-                                <select name="room"  class="form-control">
-                                    <option value="" >House Type</option>
-                                    <option value="2">Family</option>
-                                    <option value="1">Bachelor</option>
-                                </select>
                             </div>
                             <div class="form-group col-md-2">
                                 {{-- <input type="text" name="room" placeholder="room" class="form-control"> --}}

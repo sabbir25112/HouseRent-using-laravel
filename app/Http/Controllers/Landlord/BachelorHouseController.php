@@ -92,7 +92,9 @@ class BachelorHouseController extends Controller
         $house->is_for_male = $request->is_for_male;
         $house->has_ac = $request->has_ac;
         $house->rent_per_room = $request->rent_per_room;
+        $house->number_of_available_room = $request->number_of_room;
         $house->rent_per_seat = $request->rent_per_seat;
+        $house->number_of_available_seat = $request->number_of_seat;
         $house->images = isset($data) ? json_encode($data) : null;
         $house->featured_image = $featured_image_name;
         $house->save();

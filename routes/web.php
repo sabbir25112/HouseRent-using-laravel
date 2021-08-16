@@ -20,10 +20,13 @@ Route::get('/search-result', 'HomeController@search')->name('search');
 Route::get('/search-result-by-range', 'HomeController@searchByRange')->name('searchByRange');
 
 Route::get('/houses/details/{id}', 'HomeController@details')->name('house.details');
+Route::get('/bachelor-houses/details/{id}', 'HomeController@bachelorHouseDetails')->name('bachelor-house.details');
 Route::get('/all-available/houses', 'HomeController@allHouses')->name('house.all');
+Route::get('/all-available/bachelor-houses', 'HomeController@allBachelorHouses')->name('bachelor-house.all');
 Route::get('/available-houses/area/{id}', 'HomeController@areaWiseShow')->name('available.area.house');
 
 Route::post('/house-booking/id/{id}', 'HomeController@booking')->name('booking');
+Route::post('/bachelor-house-booking/id/{id}', 'HomeController@bachelorBooking')->name('bachelor-booking');
 
 Auth::routes(['verify' => true]);
 

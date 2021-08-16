@@ -35,17 +35,17 @@
                                 </select>
                             </div>
 
-                            <div class="form-group">
-                                <label for="number_of_room">Number of rooms: </label>
-                                <input type="text" class="form-control" placeholder="number_of_room" id="number_of_room"
-                                       name="number_of_room" value="{{ old('number_of_room') ?? $house->number_of_room }}">
-                            </div>
+{{--                            <div class="form-group">--}}
+{{--                                <label for="number_of_room">Number of rooms: </label>--}}
+{{--                                <input type="text" class="form-control" placeholder="number_of_room" id="number_of_room"--}}
+{{--                                       name="number_of_room" value="{{ old('number_of_room') ?? $house->number_of_room }}">--}}
+{{--                            </div>--}}
 
-                            <div class="form-group">
-                                <label for="number_of_room">Number of seats: </label>
-                                <input type="text" class="form-control" placeholder="number_of_seat" id="number_of_seat"
-                                       name="number_of_seat" value="{{ old('number_of_seat') ?? $house->number_of_seat }}">
-                            </div>
+{{--                            <div class="form-group">--}}
+{{--                                <label for="number_of_room">Number of seats: </label>--}}
+{{--                                <input type="text" class="form-control" placeholder="number_of_seat" id="number_of_seat"--}}
+{{--                                       name="number_of_seat" value="{{ old('number_of_seat') ?? $house->number_of_seat }}">--}}
+{{--                            </div>--}}
 
                             <div class="form-group">
                                 <label for="house_for">Renter Preference </label>

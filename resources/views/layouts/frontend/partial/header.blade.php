@@ -1,6 +1,6 @@
 <header>
 
-  
+
   <div class="container-fluid">
     <div class="row">
       <div class="col-sm-12">
@@ -16,7 +16,7 @@
     </div>
   </div>
 
-  
+
 
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
     {{-- <a class="navbar-brand" href="{{ route('welcome') }}"></a> --}}
@@ -33,6 +33,9 @@
         <li class="nav-item">
           <a class="nav-link" href="{{ route('house.all') }}">All Available Houses</a>
         </li>
+          <li class="nav-item">
+              <a class="nav-link" href="{{ route('bachelor-house.all') }}">Bachelor Houses</a>
+          </li>
 
 
         @guest
@@ -62,5 +65,5 @@
   var months = ["January","February","March","April","May","June","July","August","September", "October", "November", "December"];
   document.getElementById("time").innerHTML = '<strong>' + days[date.getDay()] + '</strong>' + ', ' + months[date.getMonth()] + ' ' + date.getDate() + ', ' + date.getFullYear();
 
-  
+
 </script>

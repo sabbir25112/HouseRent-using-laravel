@@ -26,9 +26,10 @@
                                 Apply for booking
                             </button>
 
-                            <form id="booking-form-{{ $house->id }}" action="{{ route('booking', $house->id) }}"
+                            <form id="booking-form-{{ $house->id }}" action="{{ route('bachelor-booking', $house->id) }}"
                                 method="POST" style="display: none;">
                                 @csrf
+                                <input type="hidden" name="booking-for" id="booking-for-{{$house->id}}">
                             </form>
                             @endif
                             @endguest
@@ -60,23 +61,23 @@
                                 <td>{{ $house->contact }}</td>
                             </tr>
                             <tr>
-                                <th>Number of rooms</th>
-                                <td>{{ $house->number_of_room }}</td>
+                                <th>Number of Available rooms</th>
+                                <td>{{ $house->number_of_available_room }}</td>
                             </tr>
 
                             <tr>
-                                <th>Number of toilet</th>
-                                <td>{{ $house->number_of_toilet }}</td>
+                                <th>Number of Available seats</th>
+                                <td>{{ $house->number_of_available_seat }}</td>
                             </tr>
 
                             <tr>
-                                <th>Number of belcony</th>
-                                <td>{{ $house->number_of_belcony }}</td>
+                                <th>Per Room Rent</th>
+                                <td>{{ $house->rent_per_room }}</td>
                             </tr>
 
                             <tr>
-                                <th>Rent</th>
-                                <td>{{ $house->rent }}</td>
+                                <th>Per Seat Rent</th>
+                                <td>{{ $house->rent_per_seat }}</td>
                             </tr>
 
                             <tr>
@@ -125,40 +126,6 @@
         </div>
     </div>
 
-
-
-    @if ($house->reviews->count() > 0)
-    <div class="row justify-content-center">
-        <div class="col-md-9">
-            <div class="card my-5">
-                <div class="card-header bg-dark text-white">
-                    <strong>Renter Reviews of this house ({{ $house->reviews->count() }})</strong>
-                </div>
-
-                <div class="card-body">
-                    @foreach ($house->reviews as $review)
-                    <div class="card mb-3">
-                        <div class="card-header">
-                            <img class="mr-3"
-                                src="{{ $review->user->image!=null ? asset('storage/profile_photo/'. $review->user->image) : asset('storage/profile_photo/default.png') }}"
-                                width="35" height="35"
-                                style="border-radius: 50%"><strong>{{ $review->user->name }}</strong>
-                        </div>
-                        <div class="card-body">
-                            <p class="text-justify">
-                                {{ $review->opinion }}
-                            </p>
-                        </div>
-                    </div>
-                    @endforeach
-                </div>
-            </div>
-        </div>
-    </div>
-    @endif
-
-
-
 </div><!-- /.container -->
 
 @endsection
@@ -195,8 +162,12 @@
             })
 
             swalWithBootstrapButtons.fire({
-                title: 'Are you sure to booking this house?',
-                type: 'warning',
+                title: 'Select field validation',
+                input: 'select',
+                inputOptions: {
+                    'room' : 'Room',
+                    'seat' : 'Seat'
+                },
                 showCancelButton: true,
                 confirmButtonText: 'Yes',
                 cancelButtonText: 'No',
@@ -204,6 +175,7 @@
                 }).then((result) => {
                     if (result.value) {
                         event.preventDefault();
+                        $('#booking-for-'+id).val(result.value);
                         document.getElementById('booking-form-'+id).submit();
 
                     } else if (
