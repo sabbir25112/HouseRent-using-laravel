@@ -34,7 +34,17 @@
                                     <tbody>
                                     @foreach ($books as $book)
                                         <tr>
-                                            <td><b>{{ $book->house_type == 1 ? "House" : "Bachelor House" }}</b></td>
+                                            <td>
+                                                <b>
+                                                    @if ($book->house_type == 1)
+                                                        House
+                                                    @elseif($book->house_type == 2)
+                                                        Bachelor House
+                                                    @else
+                                                        Sublet House
+                                                    @endif
+                                                </b>
+                                            </td>
                                             <td>{{ $book->address }}</td>
                                             <td>{{ $book->created_at->format('F d, Y') }}</td>
                                             <td>{{ $book->rent }}</td>

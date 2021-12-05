@@ -20,15 +20,18 @@ Route::get('/search-result', 'HomeController@search')->name('search');
 Route::get('/search-result-by-range', 'HomeController@searchByRange')->name('searchByRange');
 
 Route::get('/houses/details/{id}', 'HomeController@details')->name('house.details');
+Route::get('/sublet-houses/details/{id}', 'HomeController@subletHouseDetails')->name('sublet-house.details');
 Route::get('/bachelor-houses/details/{id}', 'HomeController@bachelorHouseDetails')->name('bachelor-house.details');
 Route::get('/all-available/houses', 'HomeController@allHouses')->name('house.all');
+Route::get('/all-available/sublet-houses', 'HomeController@allSubletHouses')->name('sublet-house.all');
 Route::get('/all-available/bachelor-houses', 'HomeController@allBachelorHouses')->name('bachelor-house.all');
 Route::get('/available-houses/area/{id}', 'HomeController@areaWiseShow')->name('available.area.house');
 
 Route::post('/house-booking/id/{id}', 'HomeController@booking')->name('booking');
 Route::post('/bachelor-house-booking/id/{id}', 'HomeController@bachelorBooking')->name('bachelor-booking');
+Route::post('/sublet-house-booking/id/{id}', 'HomeController@subletBooking')->name('sublet-booking');
 
-Auth::routes(['verify' => true]);
+Auth::routes(['verify' => false, 'reset' => false]);
 
 Route::get('/home', 'HomeController@index')->name('home');
 Route::get('auth/google', 'Auth\GoogleController@redirectToGoogle');
@@ -37,7 +40,7 @@ Route::get('auth/google/callback', 'Auth\GoogleController@handleGoogleCallback')
 
 //admin
 
-Route::group(['as' => 'admin.', 'prefix' => 'admin', 'namespace' => 'Admin', 'middleware' => ['auth', 'admin', 'verified']],
+Route::group(['as' => 'admin.', 'prefix' => 'admin', 'namespace' => 'Admin', 'middleware' => ['auth', 'admin']],
     function () {
         Route::get('dashboard', 'DashboardController@index')->name('dashboard');
         Route::resource('area', 'AreaController');
@@ -59,13 +62,16 @@ Route::group(['as' => 'admin.', 'prefix' => 'admin', 'namespace' => 'Admin', 'mi
 
 //landlord
 
-Route::group(['as' => 'landlord.', 'prefix' => 'landlord', 'namespace' => 'Landlord', 'middleware' => ['auth', 'landlord', 'verified']],
+Route::group(['as' => 'landlord.', 'prefix' => 'landlord', 'namespace' => 'Landlord', 'middleware' => ['auth', 'landlord']],
     function () {
         Route::get('dashboard', 'DashboardController@index')->name('dashboard');
         Route::resource('area', 'AreaController');
         Route::resource('house', 'HouseController');
+        Route::resource('sublet-house', 'SubletHouseController');
         Route::resource('bachelor-house', 'BachelorHouseController');
+
         Route::get('house/switch-status/{id}', 'HouseController@switch')->name('house.status');
+        Route::get('sublet-house/switch-status/{id}', 'SubletHouseController@switch')->name('sublet-house.status');
         Route::get('bachelor-house/switch-status/{id}', 'BachelorHouseController@switch')->name('bachelor-house.status');
 
         Route::get('booking-request-list', 'BookingController@bookingRequestListForLandlord')->name('bookingRequestList');
@@ -82,14 +88,18 @@ Route::group(['as' => 'landlord.', 'prefix' => 'landlord', 'namespace' => 'Landl
 
 //renter
 
-Route::group(['as' => 'renter.', 'prefix' => 'renter', 'namespace' => 'Renter', 'middleware' => ['auth', 'renter', 'verified']],
+Route::group(['as' => 'renter.', 'prefix' => 'renter', 'namespace' => 'Renter', 'middleware' => ['auth', 'renter']],
     function () {
         Route::get('dashboard', 'DashboardController@index')->name('dashboard');
 
         Route::get('areas', 'DashboardController@areas')->name('areas');
 
         Route::get('houses', 'DashboardController@allHouses')->name('allHouses');
+        Route::get('bachelor-houses', 'DashboardController@allBachelorHouses')->name('allBachelorHouses');
+        Route::get('sublet-houses', 'DashboardController@allSubletHouses')->name('allSubletHouses');
         Route::get('house/details/{id}', 'DashboardController@housesDetails')->name('houses.details');
+        Route::get('bachelor-house/details/{id}', 'DashboardController@bachelorHousesDetails')->name('bachelor-houses.details');
+        Route::get('sublet-house/details/{id}', 'DashboardController@subletHousesDetails')->name('sublet-houses.details');
 
         Route::get('profile-info', 'SettingsController@showProfile')->name('profile.show');
         Route::get('profile-info/edit/{id}', 'SettingsController@editProfile')->name('profile.edit');

@@ -8,11 +8,11 @@
             tempor incididunt ut labore etiqua. Ut enim ad minim veniam,
             quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo.</p>
           </div>
-        
+
           <div class="col-md-4">
             <h2 class="head">Contact Us</h2>
-            <p> <i class="fas fa-map-marker-alt"></i> House Rental, Zindabazar, Sylhet</p>
-            <p><i class="fas fa-phone"></i> +88 01612345678</p>
+            <p> <i class="fas fa-map-marker-alt"></i> House Rental, Mirpur, Dhaka</p>
+            <p><i class="fas fa-phone"></i> +88 01888888888</p>
             <p><i class="fas fa-envelope"></i> yourname@gmail.com</p>
           </div>
 

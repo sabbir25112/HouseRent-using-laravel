@@ -6,6 +6,7 @@ use App\BachelorHouse;
 use App\Booking;
 use App\House;
 use App\Http\Controllers\Controller;
+use App\SubletHouse;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -36,13 +37,22 @@ class BookingController extends Controller
             $houseAddress = $book->address;
 
             $house->save();
-        } else {
+        } elseif ($book->house_type == 2) {
             $house = BachelorHouse::where('id', $book->house_id)->first();
             if ($book->booking_for == 'seat') {
                 $house->number_of_available_seat = $house->number_of_available_seat - 1;
             } else {
                 $house->number_of_available_room = $house->number_of_available_room - 1;
             }
+            $house->save();
+        } elseif ($book->house_type == 2) {
+            $house = SubletHouse::where('id', $book->house_id)->first();
+            $house->status = 0;
+
+            $renterContact = $book->renter->contact;
+            $renterName = $book->renter->name;
+            $houseAddress = $book->address;
+
             $house->save();
         }
 

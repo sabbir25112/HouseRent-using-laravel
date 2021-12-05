@@ -9,6 +9,8 @@
             <div class="row justify-content-center py-5">
                 @if ($type == 1)
                     <h2 class="text-center"><strong>All Available Houses List</strong></h2>
+                @elseif ($type == 3)
+                    <h2 class="text-center"><strong>All Available Sublet Houses List</strong></h2>
                 @else
                     <h2 class="text-center"><strong>All Available Bachelor Houses List</strong></h2>
                 @endif
@@ -26,23 +28,25 @@
                                              class="img-fluid" alt="Card image">
                                     </div>
                                     <div class="card-body">
-                                        <p>
-                                        <h4><strong><i class="fas fa-map-marker-alt"> {{ $house->area->name }},
-                                                    Sylhet</i>
-                                            </strong></h4>
-                                        </p>
+                                        <h4>
+                                            <strong><i class="fas fa-map-marker-alt"> {{ $house->area->name }}</i>
+                                            </strong>
+                                        </h4>
 
-                                        <p class="grey"><a class="address"
-                                                           href="{{ route('house.details', $house->id) }}"><i
-                                                    class="fas fa-warehouse"> {{ $house->address }}</i></a></p>
+                                        <p class="grey">
+                                            <a class="address" href="{{ route('house.details', $house->id) }}">
+                                                <i class="fas fa-warehouse"> {{ $house->address }}</i>
+                                            </a>
+                                        </p>
                                         <hr>
                                         <p class="grey">
-                                            @if ($type == 1)
+                                            @if ($type == 1 || $type == 3)
                                                 <i class="fas fa-bed"></i> {{ $house->number_of_room }} Bedrooms
                                             @else
-                                                <i class="fas fa-bed"></i> {{ $house->number_of_available_room }} Bedrooms
+                                                <i class="fas fa-bed"></i> {{ $house->number_of_available_room }}
+                                                Bedrooms
                                             @endif
-                                            @if ($type == 1)
+                                            @if ($type == 1 || $type == 3)
                                                 <i class="fas fa-bath float-right">
                                                     {{ $house->number_of_toilet }} Bathrooms
                                                 </i>
@@ -53,7 +57,9 @@
                                             @endif
                                         </p>
                                         <p class="grey">
-                                        <h4>৳ {{ $type == 1 ? $house->rent : $house->rent_per_room . ' / ' . $house->rent_per_seat }} BDT</i></h4>
+                                        <h4>
+                                            ৳ {{ $type == 1 || $type == 3 ? $house->rent : $house->rent_per_room . ' / ' . $house->rent_per_seat }}
+                                            BDT</i></h4>
                                         </p>
                                     </div>
                                     <div class="card-footer">
@@ -61,6 +67,11 @@
                                             @if ($type == 1)
                                                 <div>
                                                     <a href="{{ route('house.details', $house->id) }}"
+                                                       class="btn btn-info">Details</a>
+                                                </div>
+                                            @elseif ($type == 3)
+                                                <div>
+                                                    <a href="{{ route('sublet-house.details', $house->id) }}"
                                                        class="btn btn-info">Details</a>
                                                 </div>
                                             @else

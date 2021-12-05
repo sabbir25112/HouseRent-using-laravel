@@ -1,22 +1,21 @@
 <?php namespace App\Http\Controllers\Landlord;
 
 use App\Area;
-use App\BachelorHouse;
-use App\House;
 use App\Http\Controllers\Controller;
+use App\SubletHouse;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
 
-class BachelorHouseController extends Controller
+class SubletHouseController extends Controller
 {
     public function index()
     {
-        $houses = BachelorHouse::latest()->where('user_id', Auth::id())->paginate(8);
-        $housecount = BachelorHouse::where('user_id', Auth::id())->count();
-        return view('landlord.bachelor.index', compact('houses', 'housecount'));
+        $houses = SubletHouse::latest()->where('user_id', Auth::id())->paginate(8);
+        $housecount = SubletHouse::where('user_id', Auth::id())->count();
+        return view('landlord.sublet.index', compact('houses', 'housecount'));
     }
 
     public function create()
@@ -27,7 +26,7 @@ class BachelorHouseController extends Controller
         }
 
         $areas = Area::all();
-        return view('landlord.bachelor.create', compact('areas'));
+        return view('landlord.sublet.create', compact('areas'));
     }
 
     public function store(Request $request)
@@ -35,17 +34,14 @@ class BachelorHouseController extends Controller
         $this->validate($request,[
             'address' => 'required',
             'area_id' => 'required',
-            'house_for' => 'required',
-            'is_for_male' => 'required',
-            'has_ac' => 'required',
             'number_of_room' => 'required|numeric|integer',
-            'number_of_seat' => 'required|numeric|integer',
-            'rent_per_room' => 'required|numeric',
-            'rent_per_seat' => 'required|numeric',
+            'number_of_toilet' => 'required|numeric|integer',
+            'is_for_married' => 'required',
+            'is_for_male' => 'required',
+            'rent' => 'required|numeric',
             'featured_image' => 'required|mimes:jpeg,png,jpg',
             'images.*' => 'required|mimes:jpeg,png,jpg',
         ]);
-
 
         //handle featured image
         $featured_image = $request->file('featured_image');
@@ -81,53 +77,64 @@ class BachelorHouseController extends Controller
             }
         }
 
-        $house = new BachelorHouse();
+        $house = new SubletHouse();
         $house->address = $request->address;
         $house->user_id = Auth::id();
         $house->contact = Auth::user()->contact;
         $house->area_id = $request->area_id;
+        $house->number_of_toilet = $request->number_of_toilet;
         $house->number_of_room = $request->number_of_room;
-        $house->number_of_seat = $request->number_of_seat;
-        $house->house_for = $request->house_for;
+        $house->is_for_married = $request->is_for_married;
         $house->is_for_male = $request->is_for_male;
-        $house->has_ac = $request->has_ac;
-        $house->rent_per_room = $request->rent_per_room;
-        $house->number_of_available_room = $request->number_of_room;
-        $house->rent_per_seat = $request->rent_per_seat;
-        $house->number_of_available_seat = $request->number_of_seat;
+        $house->rent = $request->rent;
         $house->images = isset($data) ? json_encode($data) : null;
         $house->featured_image = $featured_image_name;
         $house->save();
-        return redirect(route('landlord.bachelor-house.index'))->with('success', 'Bachelor House Added successfully');
+
+        return redirect(route('landlord.sublet-house.index'))->with('success', 'Sublet House Added successfully');
     }
 
-    public function show(BachelorHouse $bachelorHouse)
+    public function switch($id)
     {
-        return view('landlord.bachelor.show')->with('house', $bachelorHouse);
+        $house = SubletHouse::find($id);
+        if($house->status == 1){
+            $house->status = 0;
+        }else{
+            $house->status = 1;
+        }
+        $house->save();
+
+        session()->flash('success', 'Sublet House Status Changed Successfully');
+        return redirect()->back();
     }
 
-    public function edit(BachelorHouse $bachelorHouse)
+    public function show(SubletHouse $subletHouse)
     {
-        $house = $bachelorHouse;
+        return view('landlord.sublet.show')->with('house', $subletHouse);
+    }
+
+    public function edit(SubletHouse $subletHouse)
+    {
+        $house = $subletHouse;
         $areas = Area::all();
-        return view('landlord.bachelor.edit', compact('areas', 'house'));
+        return view('landlord.sublet.edit', compact('areas', 'house'));
     }
 
-    public function update(Request $request, BachelorHouse $bachelorHouse)
+    public function update(Request $request, $house)
     {
         $this->validate($request,[
             'address' => 'required',
             'area_id' => 'required',
-            'house_for' => 'required',
+            'number_of_room' => 'required|numeric|integer',
+            'number_of_toilet' => 'required|numeric|integer',
+            'is_for_married' => 'required',
             'is_for_male' => 'required',
-            'has_ac' => 'required',
-            'rent_per_room' => 'required|numeric',
-            'rent_per_seat' => 'required|numeric',
+            'rent' => 'required|numeric',
             'featured_image' => 'mimes:jpeg,png,jpg',
             'images.*' => 'mimes:jpeg,png,jpg',
         ]);
 
-        $house = $bachelorHouse;
+        $house = SubletHouse::find($house);
 
         //handle featured image
 
@@ -177,33 +184,24 @@ class BachelorHouseController extends Controller
         }
 
         $house->address = $request->address;
-        $house->user_id = Auth::id();
-        $house->contact = Auth::user()->contact;
         $house->area_id = $request->area_id;
+        $house->number_of_toilet = $request->number_of_toilet;
         $house->number_of_room = $request->number_of_room;
-        $house->number_of_seat = $request->number_of_seat;
-        $house->house_for = $request->house_for;
+        $house->is_for_married = $request->is_for_married;
         $house->is_for_male = $request->is_for_male;
-        $house->has_ac = $request->has_ac;
-        $house->rent_per_room = $request->rent_per_room;
-        $house->rent_per_seat = $request->rent_per_seat;
+        $house->rent = $request->rent;
         $house->save();
-        return redirect(route('landlord.bachelor-house.index'))->with('success', 'Bachelor House Updated successfully');
 
-
-
+        return redirect(route('landlord.sublet-house.index'))->with('success', 'Sublet House Updated successfully');
     }
 
-    public function destroy(BachelorHouse $bachelorHouse)
+    public function destroy($house)
     {
-        $house = $bachelorHouse;
-        if ($house->images) {
-            //delete multiple added images
-            foreach(json_decode($house->images) as $picture){
-                @unlink("images/". $picture);
-            }
+        $house = SubletHouse::findOrFail($house);
+        //delete multiple added images
+        foreach(json_decode($house->images) as $picture){
+            @unlink("images/". $picture);
         }
-
 
         //delete old featured image
         if(Storage::disk('public')->exists('featured_house/'.$house->featured_image)){
@@ -211,20 +209,6 @@ class BachelorHouseController extends Controller
         }
 
         $house->delete();
-        return redirect(route('landlord.bachelor-house.index'))->with('success', 'Bachelor House Removed Successfully');
-    }
-
-    public function switch($id)
-    {
-        $house = BachelorHouse::find($id);
-        if($house->status == 1){
-            $house->status = 0;
-        }else{
-            $house->status = 1;
-        }
-        $house->save();
-
-        session()->flash('success', 'Bachelor House Status Changed Successfully');
-        return redirect()->back();
+        return redirect(route('landlord.sublet-house.index'))->with('success', 'Sublet House Removed Successfully');
     }
 }
